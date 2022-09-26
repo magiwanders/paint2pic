@@ -22,7 +22,7 @@ function buildP2P(remoteImage, anchor) {
             ),
             _div({id: 'canvas_container', style:'width: 100%; overflow: scroll;'},
                 _canvas({
-                    id: 'canvas',
+                    id: 'canvas_'+anchor.id,
                     height: image.height,
                     width: image.width,
                     style: 'border: 1px solid;'
@@ -30,7 +30,7 @@ function buildP2P(remoteImage, anchor) {
             )
         ]
     ))
-    canvas = document.getElementById('canvas') 
+    canvas = document.getElementById('canvas_'+anchor.id) 
     ctx = canvas.getContext('2d');
     ctx.drawImage(image, 0, 0)
     canvas.addEventListener('mousedown', function(event) {mousedown(canvas, event);})
@@ -59,6 +59,36 @@ function colorChange() {
 //     link.href = document.getElementById(canvas).toDataURL();
 //     link.download = filename;
 // }
+
+		// // SAVE FUNCTION
+
+		// function save() {
+		// 	localStorage.removeItem("savedCanvas");
+		// 	localStorage.setItem("savedCanvas", JSON.stringify(linesArray));
+		// 	console.log("Saved canvas!");
+		// }
+
+		// // LOAD FUNCTION
+
+		// function load() {
+		// 	if (localStorage.getItem("savedCanvas") != null) {
+		// 		linesArray = JSON.parse(localStorage.savedCanvas);
+		// 		var lines = JSON.parse(localStorage.getItem("savedCanvas"));
+		// 		for (var i = 1; i < lines.length; i++) {
+		// 			ctx.beginPath();
+		// 			ctx.moveTo(linesArray[i-1].x, linesArray[i-1].y);
+		// 			ctx.lineWidth  = linesArray[i].size;
+		// 			ctx.lineCap = "round";
+		// 			ctx.strokeStyle = linesArray[i].color;
+		// 			ctx.lineTo(linesArray[i].x, linesArray[i].y);
+		// 			ctx.stroke();
+		// 		}
+		// 		console.log("Canvas loaded.");
+		// 	}
+		// 	else {
+		// 		console.log("No canvas in memory!");
+		// 	}
+		// }
 
 //#region MOUSE
 
