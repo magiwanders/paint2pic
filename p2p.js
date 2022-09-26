@@ -1,8 +1,9 @@
+var anchors = []
 var image
-var canvas
-var ctx
+var canvas = {}
+var ctx = {}
 var size = 2
-var color = "#FFD000"
+var color = {}
 var isMouseDown = false
 
 async function p2pStart(p2p_containers) {
@@ -30,15 +31,16 @@ async function p2pStart(p2p_containers) {
 
 function buildP2P(remoteImage, anchor) {
     anchor.innerHTML = ''
+    anchors.push(anchor)
     image = remoteImage
     anchor.appendChild(_div({id: 'p2p'}, 
         [
             _div({id: 'controls', style: 'display:inline-block'},
                 [
                     'You can draw on this image with this color ',
-                    _input({type:'color', id:'colorpicker', value:color, onchange: 'colorChange()'}),
+                    _input({type:'color_'+anchor.id, id:'colorpicker', value:color, onchange: 'colorChange(event)'}),
                     ', after which you can',
-                    _button({id:'clear', onclick: 'reloadImage()'}, 'Clear'),
+                    _button({id:'clear_'+anchor.id, onclick: 'reloadImage(event)'}, 'Clear'),
                     ' it. Sketches will NOT be saved.'
                 ]
             ),
@@ -52,21 +54,25 @@ function buildP2P(remoteImage, anchor) {
             )
         ]
     ))
-    canvas = document.getElementById('canvas_'+anchor.id) 
-    ctx = canvas.getContext('2d');
-    ctx.drawImage(image, 0, 0)
-    canvas.addEventListener('mousedown', function(event) {mousedown(canvas, event);})
-    canvas.addEventListener('mousemove',function(event) {mousemove(canvas, event);})
-    canvas.addEventListener('mouseup',mouseup)
+    var id = anchors[anchors.length-1].id
+    canvas[id] = document.getElementById('canvas_'+anchor.id) 
+    ctx[id] = canvas[id].getContext('2d');
+    ctx[id].drawImage(image, 0, 0)
+    canvas[id].addEventListener('mousedown', function(event) {mousedown(event);})
+    canvas[id].addEventListener('mousemove',function(event) {mousemove(event);})
+    canvas[id].addEventListener('mouseup',mouseup)
+    color[id] = "#FFD000"
 }
 
-function reloadImage() {
-    console.log('Reloading Image...')
-    ctx.drawImage(image, 0, 0);
+function reloadImage(event) {
+    var id = event.target.id.substring(6, event.target.id.length)
+    console.log('Reloading Image: '+id)
+    ctx[id].drawImage(image, 0, 0);
 }
-function colorChange() {
-    console.log('Changing color to: ' + document.getElementById('colorpicker').value)
-    color = document.getElementById('colorpicker').value;
+function colorChange(event) {
+    var id = event.target.id.substring(6, event.target.id.length)
+    console.log('Changing color to: ' + document.getElementById(event.target.id).value)
+    color[id] = document.getElementById(event.target.id).value;
 }
 
 // POSSIBLE FUTURE ADDITIONS
@@ -114,31 +120,35 @@ function colorChange() {
 
 //#region MOUSE
 
-function getMousePos(canvas, evt) {
+function getMousePos(canvas, event) {
     var rect = canvas.getBoundingClientRect();
     return {
-        x: evt.clientX - rect.left,
-        y: evt.clientY - rect.top
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top
     };
 }
 
-function mousedown(canvas, evt) {
+function mousedown(event) {
+    var id = event.target.id.substring(7, event.target.id.length)
+    console.log(id)
+    var canvas = event.target
     isMouseDown=true
-    var mousePos = getMousePos(canvas, evt);
-    var currentPosition = getMousePos(canvas, evt);
-    ctx.moveTo(currentPosition.x, currentPosition.y)
-    ctx.beginPath();
-    ctx.lineWidth  = size;
-    ctx.lineCap = "round";
-    ctx.strokeStyle = color;
+    var currentPosition = getMousePos(canvas, event);
+    ctx[id].moveTo(currentPosition.x, currentPosition.y)
+    ctx[id].beginPath();
+    ctx[id].lineWidth  = size;
+    ctx[id].lineCap = "round";
+    ctx[id].strokeStyle = color[id];
 
 }
 
-function mousemove(canvas, evt) {
+function mousemove(event) {
+    var id = event.target.id.substring(7, event.target.id.length)
+    var canvas = event.target
     if(isMouseDown){
-        var currentPosition = getMousePos(canvas, evt);
-        ctx.lineTo(currentPosition.x, currentPosition.y)
-        ctx.stroke();
+        var currentPosition = getMousePos(canvas, event);
+        ctx[id].lineTo(currentPosition.x, currentPosition.y)
+        ctx[id].stroke();
     }
 }
 
