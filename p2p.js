@@ -1,5 +1,5 @@
 var anchors = []
-var image
+var image = {}
 var canvas = {}
 var ctx = {}
 var size = 2
@@ -32,32 +32,32 @@ async function p2pStart(p2p_containers) {
 function buildP2P(remoteImage, anchor) {
     anchor.innerHTML = ''
     anchors.push(anchor)
-    image = remoteImage
+    var id = anchors[anchors.length-1].id
+    image[id] = remoteImage
     anchor.appendChild(_div({id: 'p2p'}, 
         [
             _div({id: 'controls', style: 'display:inline-block'},
                 [
                     'You can draw on this image with this color ',
-                    _input({type:'color_'+anchor.id, id:'colorpicker', value:color, onchange: 'colorChange(event)'}),
+                    _input({type:'color', id:'colorpicker_'+id, value:color, onchange: 'colorChange(event)'}),
                     ', after which you can',
-                    _button({id:'clear_'+anchor.id, onclick: 'reloadImage(event)'}, 'Clear'),
+                    _button({id:'clear_'+id, onclick: 'reloadImage(event)'}, 'Clear'),
                     ' it. Sketches will NOT be saved.'
                 ]
             ),
             _div({id: 'canvas_container', style:'width: 100%; overflow: scroll;'},
                 _canvas({
-                    id: 'canvas_'+anchor.id,
-                    height: image.height,
-                    width: image.width,
+                    id: 'canvas_'+id,
+                    height: image[id].height,
+                    width: image[id].width,
                     style: 'border: 1px solid;'
                 })
             )
         ]
     ))
-    var id = anchors[anchors.length-1].id
     canvas[id] = document.getElementById('canvas_'+anchor.id) 
     ctx[id] = canvas[id].getContext('2d');
-    ctx[id].drawImage(image, 0, 0)
+    ctx[id].drawImage(image[id], 0, 0)
     canvas[id].addEventListener('mousedown', function(event) {mousedown(event);})
     canvas[id].addEventListener('mousemove',function(event) {mousemove(event);})
     canvas[id].addEventListener('mouseup',mouseup)
@@ -67,10 +67,10 @@ function buildP2P(remoteImage, anchor) {
 function reloadImage(event) {
     var id = event.target.id.substring(6, event.target.id.length)
     console.log('Reloading Image: '+id)
-    ctx[id].drawImage(image, 0, 0);
+    ctx[id].drawImage(image[id], 0, 0);
 }
 function colorChange(event) {
-    var id = event.target.id.substring(6, event.target.id.length)
+    var id = event.target.id.substring(12, event.target.id.length)
     console.log('Changing color to: ' + document.getElementById(event.target.id).value)
     color[id] = document.getElementById(event.target.id).value;
 }
