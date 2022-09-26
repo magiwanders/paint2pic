@@ -1,4 +1,4 @@
-var image = new Image()
+var image
 var canvas
 var ctx
 var size = 2
@@ -6,9 +6,9 @@ var color = "#FFD000"
 var isMouseDown = false
 
 
-function buildP2P(imageAddress, anchor) {
+function buildP2P(remoteImage, anchor) {
     anchor.innerHTML = ''
-    image.src = imageAddress
+    image = remoteImage
     anchor.appendChild(_div({id: 'p2p'}, 
         [
             _div({id: 'controls', style: 'display:inline-block'},
@@ -32,10 +32,10 @@ function buildP2P(imageAddress, anchor) {
     ))
     canvas = document.getElementById('canvas') 
     ctx = canvas.getContext('2d');
-    image.onload = function () { ctx.drawImage(image, 0, 0); }
-    canvas.addEventListener('mousedown', function(event) {mousedown(canvas, event);});
-    canvas.addEventListener('mousemove',function(event) {mousemove(canvas, event);});
-    canvas.addEventListener('mouseup',mouseup);
+    ctx.drawImage(image, 0, 0)
+    canvas.addEventListener('mousedown', function(event) {mousedown(canvas, event);})
+    canvas.addEventListener('mousemove',function(event) {mousemove(canvas, event);})
+    canvas.addEventListener('mouseup',mouseup)
 }
 
 function reloadImage() {
