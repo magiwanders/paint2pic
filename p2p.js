@@ -34,12 +34,13 @@ function buildP2P(remoteImage, anchor) {
     anchors.push(anchor)
     var id = anchors[anchors.length-1].id
     image[id] = remoteImage
+    color[id] = "#FFD000"
     anchor.appendChild(_div({id: 'p2p'}, 
         [
             _div({id: 'controls', style: 'display:inline-block'},
                 [
                     'You can draw on this image with this color ',
-                    _input({type:'color', id:'colorpicker_'+id, value:color, onchange: 'colorChange(event)'}),
+                    _input({type:'color', id:'colorpicker_'+id, value:color[id], onchange: 'colorChange(event)'}),
                     ', after which you can',
                     _button({id:'clear_'+id, onclick: 'reloadImage(event)'}, 'Clear'),
                     ' it. Sketches will NOT be saved.'
@@ -61,7 +62,6 @@ function buildP2P(remoteImage, anchor) {
     canvas[id].addEventListener('mousedown', function(event) {mousedown(event);})
     canvas[id].addEventListener('mousemove',function(event) {mousemove(event);})
     canvas[id].addEventListener('mouseup',mouseup)
-    color[id] = "#FFD000"
 }
 
 function reloadImage(event) {
