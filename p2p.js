@@ -5,6 +5,28 @@ var size = 2
 var color = "#FFD000"
 var isMouseDown = false
 
+async function p2pStart(p2p_containers) {
+    const loadImage = path => {
+        return new Promise((resolve, reject) => {
+          const img = new Image()
+          img.crossOrigin = 'Anonymous' // to avoid CORS if used with Canvas
+          img.src = path
+          img.onload = () => {
+            resolve(img)
+          }
+          img.onerror = e => {
+            reject(e)
+          }
+        })
+      }
+    for (var i=0; i<p2p_containers.length; i++) {
+        var p2p_container = p2p_containers.item(i)
+        await loadImage(p2p_container.id).then( (image) => {
+
+            buildP2P(image, p2p_container)
+        })
+    }
+}
 
 function buildP2P(remoteImage, anchor) {
     anchor.innerHTML = ''
